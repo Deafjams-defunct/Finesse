@@ -116,7 +116,8 @@
                                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
                                             <connections>
                                                 <action selector="incomeTextFieldEditingChanged:" destination="fsU-Lz-cFW" eventType="editingChanged" id="V1q-S4-9RD"/>
-                                                <outlet property="delegate" destination="ci3-Fw-IrY" id="d8P-KI-sSv"/>
+                                                <action selector="incomeTextFieldEditingDidEnd:" destination="d8f-zl-f8D" eventType="editingDidEnd" id="If2-cY-jrx"/>
+                                                <outlet property="delegate" destination="d8f-zl-f8D" id="gj0-bZ-paj"/>
                                             </connections>
                                         </textField>
                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Oty-fE-UdV">
@@ -139,7 +140,7 @@
                                     <outlet property="transactionLabelButton" destination="a8i-3F-PJS" id="jWn-aZ-36d"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="addExpenseCell" textLabel="i0H-7f-NON" style="IBUITableViewCellStyleDefault" id="Ok8-hq-CeF">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="addExpenseCell" textLabel="i0H-7f-NON" style="IBUITableViewCellStyleDefault" id="Ok8-hq-CeF">
                                 <rect key="frame" x="0.0" y="144" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ok8-hq-CeF" id="PRw-3K-2ui">

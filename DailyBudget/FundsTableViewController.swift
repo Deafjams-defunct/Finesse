@@ -8,25 +8,16 @@
 
 import UIKit
 
-class FundsTableViewController: UITableViewController {
+class FundsTableViewController: UITableViewController, UITextFieldDelegate{
 
-    var income: Array<UITableViewCell>
-    var expenses: Array<UITableViewCell>
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        self.income = Array<UITableViewCell>()
-        self.expenses = Array<UITableViewCell>()
-        
-        super.init(coder: aDecoder)
-        
-    }
+    var income = Array<[String: String]?>()
+    var expenses = Array<[String: String]?>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        self.clearsSelectionOnViewWillAppear = false
 
         self.setEditing(true, animated: true)
         
@@ -46,7 +37,6 @@ class FundsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         var rowCount = 1
         
         if section == 0 {
@@ -61,27 +51,40 @@ class FundsTableViewController: UITableViewController {
         
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Income"
+            
+        } else if section == 1 {
+            return "Expenses"
+            
+        } else {
+            return nil
+            
+        }
+    }
+    
     func firstCellForIndex(_ indexPath:IndexPath) -> Bool {
-        let firstIncomeCell = (indexPath.section == 0) && (self.income.count == indexPath.item)
-        let firstExpenseCell = (indexPath.section == 1) && (self.expenses.count == indexPath.item)
+        let firstIncomeCell = indexPath.section == 0 && self.income.count == indexPath.item
+        let firstExpenseCell = indexPath.section == 1 && self.expenses.count == indexPath.item
         
         return firstIncomeCell || firstExpenseCell
         
     }
     
     func identifierForIndex(_ indexPath:IndexPath) -> String {
-        if (self.firstCellForIndex(indexPath)) {
-            if (indexPath.section == 0) {
+        if indexPath.section == 0 {
+            if indexPath.item == self.income.count {
                 return "addIncomeCell"
                 
             } else {
-                return "addExpenseCell"
+                return "incomeCell"
                 
             }
             
         } else {
-            if (indexPath.section == 0) {
-                return "incomeCell"
+            if  indexPath.item == self.expenses.count {
+                return "addExpenseCell"
                 
             } else {
                 return "expenseCell"
@@ -89,28 +92,63 @@ class FundsTableViewController: UITableViewController {
             }
             
         }
-        
+
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.dequeueReusableCell(withIdentifier: self.identifierForIndex(indexPath))!
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: self.identifierForIndex(indexPath))!
         
+        if indexPath.section == 0 {
+            if indexPath.item < self.income.count {
+                let transactionCell = cell as! IncomeTableViewCell
+                transactionCell.currencyTextField.text = self.income[indexPath.item]!["text"]
+                transactionCell.transactionLabelButton.titleLabel?.text = self.income[indexPath.item]!["label"]
+                
+            } else {
+                cell.selectionStyle = .none
+                
+            }
+            
+        } else if indexPath.section == 1 {
+            if indexPath.item < self.expenses.count {
+                let transactionCell = cell as! ExpenseTableViewCell
+                transactionCell.currencyTextField.text = self.expenses[indexPath.item]!["text"]
+                transactionCell.transactionLabelButton.titleLabel?.text = self.expenses[indexPath.item]!["label"]
+                
+            } else {
+                cell.selectionStyle = .none
+                
+            }
+            
+        }
+
+        return cell
+
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        if (self.firstCellForIndex(indexPath)) {
-            return .insert
+        if indexPath.section == 0 {
+            if indexPath.item == self.income.count {
+                return .insert
+                
+            } else {
+                return .delete
+                
+            }
             
-        } else {
-            return .delete
+        } else if indexPath.section == 1 {
+            if  indexPath.item == self.expenses.count {
+                return .insert
+                
+            } else {
+                return .delete
+                
+            }
             
         }
         
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.tableView.cellForRow(at: indexPath)?.setSelected(true, animated: true)
-        
+        return .none
+
     }
 
     // Override to support editing the table view.
@@ -118,36 +156,55 @@ class FundsTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             
-            if (indexPath.section == 0) {
+            if indexPath.section == 0 {
                 self.income.remove(at: indexPath.item)
                 
-            } else if (indexPath.section == 1) {
+            } else if indexPath.section == 1 {
                 self.expenses.remove(at: indexPath.item)
                 
             }
             
             tableView.deleteRows(at: [indexPath], with: .fade)
             
-            
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
             
-            let cell = self.tableView(tableView, cellForRowAt: indexPath)
-            // let cell = self.tableView.cellForRow(at: indexPath)!
-            
             if indexPath.section == 0 {
-                self.income.append(cell)
+                self.income.append(
+                    [
+                        "text": "$0",
+                        "label": "Hello World"
+                    ]
+                )
                 
-            } else if indexPath.section == 1 {
-                self.expenses.append(cell)
+            } else {
+                self.expenses.append(
+                    [
+                        "text": "$0",
+                        "label": "Hello World"
+                    ]
+                )
                 
             }
             
+            self.tableView.beginUpdates()
             self.tableView.insertRows(at: [indexPath], with: .bottom)
-            // self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
-            // self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            self.tableView.endUpdates()
             
         }
+        
+    }
+    
+    @IBAction func incomeTextFieldEditingDidEnd(_ sender: UITextField) {
+        let indexPath = self.tableView.indexPathForRow(
+            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
+            )!
+    
+        self.income[indexPath.item] = [
+            "text": sender.text!,
+            "label": "hello world"
+        ]
+        print(self.income)
         
     }
 

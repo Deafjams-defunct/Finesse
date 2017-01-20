@@ -10,22 +10,22 @@ import UIKit
 
 class IncomeTableViewCell: TransactionTableViewCell {
     
-    var dataSource: TransactionLabelDataSource
+    let dataSource: TransactionLabelDataSource
+    
+    let label: String
     
     required init?(coder aDecoder: NSCoder) {
         self.dataSource = TransactionLabelDataSource.dataSource
+        self.label = self.dataSource.nextLabel(for: .income)
         
         super.init(coder: aDecoder)
-        
+
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.transactionLabelButton.setTitle(
-            self.dataSource.nextLabel(for: .income),
-            for: .normal
-        )
+        //self.transactionLabelButton.setTitle(self.label, for: .normal)
         
     }
 
