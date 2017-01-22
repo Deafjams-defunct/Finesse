@@ -12,7 +12,6 @@ class TransactionTableViewCell: UITableViewCell {
     
     @IBOutlet weak var transactionLabelButton: UIButton!
     @IBOutlet weak var currencyTextField: UITextField!
-    
     let formatter: NumberFormatter
     
     required init?(coder aDecoder: NSCoder) {

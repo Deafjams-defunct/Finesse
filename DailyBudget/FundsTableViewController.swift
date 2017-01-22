@@ -8,10 +8,20 @@
 
 import UIKit
 
-class FundsTableViewController: UITableViewController, UITextFieldDelegate{
+class FundsTableViewController: UITableViewController, UITextFieldDelegate {
+    
+    @IBAction func unwindToFunds(segue: UIStoryboardSegue) {}
 
-    var income = Array<[String: String]?>()
-    var expenses = Array<[String: String]?>()
+    var income: Array<[String: String]?>
+    var expenses: Array<[String: String]?>
+    let dataSource = TransactionLabelDataSource.dataSource
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.income = [nil]
+        self.expenses = [nil]
+        
+        super.init(coder: aDecoder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,17 +47,16 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate{
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var rowCount = 1
-        
         if section == 0 {
-            rowCount += self.income.count
+            return self.income.count
             
         } else if section == 1 {
-            rowCount += self.expenses.count
+            return self.expenses.count
+            
+        } else {
+            return 0
             
         }
-        
-        return rowCount
         
     }
     
@@ -72,53 +81,94 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate{
         
     }
     
-    func identifierForIndex(_ indexPath:IndexPath) -> String {
+    func reuseIdentifier(for indexPath:IndexPath) -> String? {
         if indexPath.section == 0 {
-            if indexPath.item == self.income.count {
+            if self.income[indexPath.item] == nil {
                 return "addIncomeCell"
                 
             } else {
-                return "incomeCell"
+                return "transactionCell"
+                
+            }
+            
+        } else if indexPath.section == 1 {
+            if self.expenses[indexPath.item] == nil {
+                return "addExpenseCell"
+                
+            } else {
+                return "transactionCell"
                 
             }
             
         } else {
-            if  indexPath.item == self.expenses.count {
-                return "addExpenseCell"
-                
-            } else {
-                return "expenseCell"
-                
-            }
+            return nil
             
         }
 
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let lastIncomeRow = indexPath.section == 0 && self.income[indexPath.item] == nil
+        let lastExpensesRow = indexPath.section == 1 && self.expenses[indexPath.item] == nil
+        
+        if lastIncomeRow || lastExpensesRow {
+            self.tableView(self.tableView, commit: .insert, forRowAt: indexPath)
+            self.tableView.deselectRow(
+                at: IndexPath.init(item: indexPath.item + 1, section: indexPath.section),
+                animated: true
+            )
+            
+        }
+        
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: self.identifierForIndex(indexPath))!
+        let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier(for: indexPath)!, for: indexPath)
+        //let cell = self.tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier(for: indexPath)!)!
+        
+        if ["addIncomeCell", "addExpenseCell"].contains(cell.reuseIdentifier!) {
+            return cell
+            
+        }
+        
+        cell.selectionStyle = .none
         
         if indexPath.section == 0 {
-            if indexPath.item < self.income.count {
-                let transactionCell = cell as! IncomeTableViewCell
-                transactionCell.currencyTextField.text = self.income[indexPath.item]!["text"]
-                transactionCell.transactionLabelButton.titleLabel?.text = self.income[indexPath.item]!["label"]
-                
-            } else {
-                cell.selectionStyle = .none
+            if self.income[indexPath.item] == nil {
+                self.income.insert(
+                    [
+                        "text": "$0",
+                        "label": self.dataSource.label(for: indexPath)!
+                    ],
+                    at: indexPath.item
+                )
                 
             }
             
-        } else if indexPath.section == 1 {
-            if indexPath.item < self.expenses.count {
-                let transactionCell = cell as! ExpenseTableViewCell
-                transactionCell.currencyTextField.text = self.expenses[indexPath.item]!["text"]
-                transactionCell.transactionLabelButton.titleLabel?.text = self.expenses[indexPath.item]!["label"]
-                
-            } else {
-                cell.selectionStyle = .none
+            let transactionCell = cell as! TransactionTableViewCell
+            transactionCell.currencyTextField.text = self.income[indexPath.item]!["text"]
+            transactionCell.transactionLabelButton.setTitle(self.income[indexPath.item]!["label"], for: .normal)
+            
+            return transactionCell
+            
+        }
+        else if indexPath.section == 1 {
+            if self.expenses[indexPath.item] == nil {
+                self.expenses.insert(
+                    [
+                        "text": "$0",
+                        "label": self.dataSource.label(for: indexPath)!
+                    ],
+                    at: indexPath.item
+                )
                 
             }
+            
+            let transactionCell = cell as! TransactionTableViewCell
+            transactionCell.currencyTextField.text = self.expenses[indexPath.item]!["text"]
+            transactionCell.transactionLabelButton.setTitle(self.expenses[indexPath.item]!["label"], for: .normal)
+            
+            return transactionCell
             
         }
 
@@ -128,7 +178,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate{
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         if indexPath.section == 0 {
-            if indexPath.item == self.income.count {
+            if self.income[indexPath.item] == nil {
                 return .insert
                 
             } else {
@@ -137,25 +187,22 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate{
             }
             
         } else if indexPath.section == 1 {
-            if  indexPath.item == self.expenses.count {
+            if self.expenses[indexPath.item] == nil {
                 return .insert
                 
             } else {
                 return .delete
                 
             }
+        } else {
+            return .none
             
         }
-        
-        return .none
 
     }
 
-    // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            
             if indexPath.section == 0 {
                 self.income.remove(at: indexPath.item)
                 
@@ -164,48 +211,58 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate{
                 
             }
             
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
             
         } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-            
             if indexPath.section == 0 {
-                self.income.append(
-                    [
-                        "text": "$0",
-                        "label": "Hello World"
-                    ]
-                )
+                if self.income[indexPath.item] == nil {
+                    self.income.insert(
+                        [
+                            "text": "$0",
+                            "label": self.dataSource.label(for: indexPath)!
+                        ],
+                        at: indexPath.item
+                    )
+                    
+                }
                 
-            } else {
-                self.expenses.append(
-                    [
-                        "text": "$0",
-                        "label": "Hello World"
-                    ]
-                )
+            } else if indexPath.section == 1 {
+                if self.expenses[indexPath.item] == nil {
+                    self.expenses.insert(
+                        [
+                            "text": "$0",
+                            "label": self.dataSource.label(for: indexPath)!
+                        ],
+                        at: indexPath.item
+                    )
+                    
+                }
                 
             }
             
-            self.tableView.beginUpdates()
-            self.tableView.insertRows(at: [indexPath], with: .bottom)
-            self.tableView.endUpdates()
+            self.tableView.insertRows(at: [indexPath], with: .automatic)
             
         }
         
     }
     
-    @IBAction func incomeTextFieldEditingDidEnd(_ sender: UITextField) {
-        let indexPath = self.tableView.indexPathForRow(
-            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
-            )!
-    
-        self.income[indexPath.item] = [
-            "text": sender.text!,
-            "label": "hello world"
-        ]
-        print(self.income)
+    @IBAction func labelButtonTapped(_ sender: Any) {
+        print("hello")
         
     }
+    
+    @IBAction func incomeTextFieldEditingDidEnd(_ sender: UITextField) {
+        let indexPath: IndexPath? = self.tableView.indexPathForRow(
+            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
+        )
+        
+        if indexPath != nil && self.income[indexPath!.item] != nil {
+            self.income[indexPath!.item]!["text"] = sender.text!
+            
+        }
+        
+    }
+    
+    
 
 }

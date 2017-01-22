@@ -35,27 +35,46 @@ class TransactionLabelDataSource: NSObject {
         "Other"
     ]
     
-    var incomeIndex = 0
-    var expensesIndex = 0
-    
-    func nextLabel(for transactionLabel: TransactionLabel) -> String {
-        if transactionLabel == .income {
-            let nextLabel = self.incomeLabels[self.incomeIndex]
-            self.incomeIndex = (self.incomeIndex + 1) % self.incomeLabels.count
+    func label(for indexPath:IndexPath) -> String? {
+        if indexPath.section == 0 {
+            return self.incomeLabels[indexPath.item % self.incomeLabels.count]
             
-            return nextLabel
-            
-        } else if transactionLabel == .expenses {
-            let nextLabel = self.expensesLabels[self.expensesIndex]
-            self.expensesIndex = (self.expensesIndex + 1) % self.expensesLabels.count
-            
-            return nextLabel
+        } else if indexPath.section == 1 {
+            return self.expensesLabels[indexPath.item % self.expensesLabels.count]
             
         } else {
-            return ""
+            return nil
             
         }
         
+    }
+    
+    func labelFromSource(for indexPath: IndexPath) -> String? {
+        if indexPath.section == 0 {
+            return self.incomeLabels[indexPath.item]
+            
+        } else if indexPath.section == 1 {
+            return self.expensesLabels[indexPath.item]
+            
+        } else {
+            return nil
+            
+        }
+        
+    }
+    
+    func count(forSection section: Int) -> Int {
+        if section == 0 {
+            return self.incomeLabels.count
+            
+        } else if section == 1 {
+            return self.expensesLabels.count
+            
+        } else {
+            return 0
+            
+        }
+    
     }
 
 }
