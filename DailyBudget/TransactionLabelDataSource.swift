@@ -63,6 +63,17 @@ class TransactionLabelDataSource: NSObject {
         
     }
     
+    func indexPathForLabel(_ label:String) -> IndexPath? {
+        if incomeLabels.contains(label) {
+            return IndexPath.init(item: incomeLabels.index(of: label)!, section: 0)
+            
+        } else {
+            return IndexPath.init(item: expensesLabels.index(of: label)!, section: 1)
+            
+        }
+        
+    }
+    
     func count(forSection section: Int) -> Int {
         if section == 0 {
             return self.incomeLabels.count

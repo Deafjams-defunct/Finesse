@@ -11,6 +11,8 @@ import UIKit
 class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     
     @IBAction func unwindToFunds(segue: UIStoryboardSegue) {}
+    
+    var rowBeingEdited: IndexPath?
 
     var income: Array<[String: String]?>
     var expenses: Array<[String: String]?>
@@ -124,7 +126,6 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier(for: indexPath)!, for: indexPath)
-        //let cell = self.tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifier(for: indexPath)!)!
         
         if ["addIncomeCell", "addExpenseCell"].contains(cell.reuseIdentifier!) {
             return cell
@@ -246,11 +247,6 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
-    @IBAction func labelButtonTapped(_ sender: Any) {
-        print("hello")
-        
-    }
-    
     @IBAction func incomeTextFieldEditingDidEnd(_ sender: UITextField) {
         let indexPath: IndexPath? = self.tableView.indexPathForRow(
             at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
@@ -263,6 +259,51 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
+    @IBAction func labelButtonTapped(_ sender: UIButton) {
+        let indexPath: IndexPath? = self.tableView.indexPathForRow(
+            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
+        )
+        
+        if indexPath != nil {
+            self.rowBeingEdited = indexPath
+            
+        }
+        
+    }
     
+    func setLabelForRowBeingEdited(_ label: String) {
+        if let editedRow = self.rowBeingEdited as IndexPath! {
+            if editedRow.section == 0 {
+                self.income[editedRow.item]!["label"] = label
+                
+            } else if editedRow.section == 1 {
+                self.expenses[editedRow.item]!["label"] = label
+                
+            } else {
+                return
+                
+            }
+            
+            self.tableView.reloadRows(at: [editedRow], with: .automatic)
+            
+        }
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "labelSegue" {
+            let labelsTableViewController = (segue.destination as! UINavigationController).visibleViewController as! LabelsTableViewController
+            labelsTableViewController.selectedLabel = (sender as! UIButton).titleLabel?.text!
+            
+            let senderButton = sender as! UIButton
+            let indexPath: IndexPath? = self.tableView.indexPathForRow(
+                at: senderButton.superview!.convert(senderButton.frame.origin, to: self.tableView)
+            )
+            
+            labelsTableViewController.selectedSection = indexPath?.section
+            
+        }
+        
+    }
 
 }
