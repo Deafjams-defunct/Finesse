@@ -76,8 +76,6 @@ class LabelsTableViewController: UITableViewController {
 
     }
     
-    
-    
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "unwindToFundsCancel", sender: self)
         

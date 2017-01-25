@@ -11,8 +11,6 @@ import CoreData
 
 class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     
-    @IBAction func unwindToFunds(segue: UIStoryboardSegue) {}
-    
     var rowBeingEdited: IndexPath?
 
     var income: [NSManagedObject?]
@@ -417,6 +415,8 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
             print("Could not save with error \(error)")
             
         }
+        
+        self.performSegue(withIdentifier: "unwindToMain", sender: self)
 
     }
     
@@ -459,4 +459,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         }
         
     }
+    
+    @IBAction func unwindToFunds(segue: UIStoryboardSegue) {}
+    
 }
