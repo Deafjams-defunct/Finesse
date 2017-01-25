@@ -140,8 +140,8 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad"/>
                                             <connections>
-                                                <action selector="incomeTextFieldEditingChanged:" destination="1GF-D0-9v6" eventType="editingChanged" id="mea-xQ-Xuf"/>
-                                                <action selector="incomeTextFieldEditingDidEnd:" destination="d8f-zl-f8D" eventType="editingDidEnd" id="lkt-EB-UnR"/>
+                                                <action selector="amountTextFieldEditingChanged:" destination="d8f-zl-f8D" eventType="editingChanged" id="lqU-rp-QJQ"/>
+                                                <action selector="incomeTextFieldEditingChanged:" destination="1GF-D0-9v6" eventType="editingChanged" id="p7b-yA-QRR"/>
                                                 <outlet property="delegate" destination="d8f-zl-f8D" id="2TL-QZ-SIe"/>
                                             </connections>
                                         </textField>
@@ -167,7 +167,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Finances" id="byu-3B-H9k">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="3Bm-W1-FBi"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Skb-Ba-AJC"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="3Bm-W1-FBi">
+                            <connections>
+                                <action selector="doneTapped:" destination="d8f-zl-f8D" id="0KL-9c-EAM"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gxr-bV-Kjw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -185,7 +190,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="labelCell" textLabel="hyi-Gg-oe2" style="IBUITableViewCellStyleDefault" id="Ije-ue-44s">
-                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="56" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ije-ue-44s" id="OYl-im-4eX">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -209,7 +214,7 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Label" id="MZc-3T-tyr">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="7qu-1L-V07">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="7qu-1L-V07">
                             <connections>
                                 <action selector="cancelTapped:" destination="5Ry-0k-NQZ" id="pvU-uW-WBY"/>
                                 <segue destination="Hwt-A4-X3m" kind="unwind" identifier="unwindToFunds" unwindAction="unwindToFundsWithSegue:" id="QcG-dw-Hx2"/>

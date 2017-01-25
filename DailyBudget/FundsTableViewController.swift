@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     
@@ -14,9 +15,10 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     
     var rowBeingEdited: IndexPath?
 
-    var income: Array<[String: String]?>
-    var expenses: Array<[String: String]?>
+    var income: [NSManagedObject?]
+    var expenses: [NSManagedObject?]
     let dataSource = TransactionLabelDataSource.dataSource
+    let dataContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     required init?(coder aDecoder: NSCoder) {
         self.income = [nil]
@@ -32,6 +34,23 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         self.clearsSelectionOnViewWillAppear = false
 
         self.setEditing(true, animated: true)
+        
+        do {
+            let savedTransactions = try self.dataContext.fetch(NSFetchRequest.init(entityName: "Transaction")) as [NSManagedObject]
+            self.income = savedTransactions.filter({$0.value(forKey: "type") as! String == "income"})
+            self.expenses = savedTransactions.filter({$0.value(forKey: "type") as! String == "expense"})
+            
+            
+        } catch {
+            self.income = [nil]
+            self.expenses = [nil]
+            
+        }
+        
+        self.income.append(nil)
+        self.expenses.append(nil)
+        
+        self.tableView.reloadData()
         
     }
 
@@ -136,38 +155,68 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         
         if indexPath.section == 0 {
             if self.income[indexPath.item] == nil {
-                self.income.insert(
-                    [
-                        "text": "$0",
-                        "label": self.dataSource.label(for: indexPath)!
-                    ],
-                    at: indexPath.item
+                let incomeTransaction = NSManagedObject.init(
+                    entity: NSEntityDescription.entity(forEntityName: "Transaction", in: self.dataContext)!,
+                    insertInto: self.dataContext
                 )
+                
+                incomeTransaction.setValuesForKeys(
+                    [
+                        "amount": "$0",
+                        "type": "income",
+                        "label": self.dataSource.label(for: indexPath)!
+                    ]
+                )
+                self.dataContext.insert(incomeTransaction)
+                self.income.insert(incomeTransaction, at: indexPath.item)
                 
             }
             
             let transactionCell = cell as! TransactionTableViewCell
-            transactionCell.currencyTextField.text = self.income[indexPath.item]!["text"]
-            transactionCell.transactionLabelButton.setTitle(self.income[indexPath.item]!["label"], for: .normal)
+            transactionCell.currencyTextField.text = self.income[indexPath.item]!.value(forKey: "amount") as? String
+            transactionCell.transactionLabelButton.setTitle(self.income[indexPath.item]!.value(forKey: "label") as? String, for: .normal)
+            
+            do {
+                try self.dataContext.save()
+                
+            } catch let error as NSError {
+                print("Could not save with error \(error)")
+                
+            }
             
             return transactionCell
             
         }
         else if indexPath.section == 1 {
             if self.expenses[indexPath.item] == nil {
-                self.expenses.insert(
-                    [
-                        "text": "$0",
-                        "label": self.dataSource.label(for: indexPath)!
-                    ],
-                    at: indexPath.item
+                let expenseTransaction = NSManagedObject.init(
+                    entity: NSEntityDescription.entity(forEntityName: "Transaction", in: self.dataContext)!,
+                    insertInto: self.dataContext
                 )
+                
+                expenseTransaction.setValuesForKeys(
+                    [
+                        "amount": "$0",
+                        "type": "expense",
+                        "label": self.dataSource.label(for: indexPath)!
+                    ]
+                )
+                self.dataContext.insert(expenseTransaction)
+                self.expenses.insert(expenseTransaction, at: indexPath.item)
                 
             }
             
             let transactionCell = cell as! TransactionTableViewCell
-            transactionCell.currencyTextField.text = self.expenses[indexPath.item]!["text"]
-            transactionCell.transactionLabelButton.setTitle(self.expenses[indexPath.item]!["label"], for: .normal)
+            transactionCell.currencyTextField.text = self.expenses[indexPath.item]!.value(forKey: "amount") as? String
+            transactionCell.transactionLabelButton.setTitle(self.expenses[indexPath.item]!.value(forKey: "label") as? String, for: .normal)
+            
+            do {
+                try self.dataContext.save()
+                
+            } catch let error as NSError {
+                print("Could not save with error \(error)")
+                
+            }
             
             return transactionCell
             
@@ -205,37 +254,56 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if indexPath.section == 0 {
+                self.dataContext.delete(self.income[indexPath.item]!)
+                
                 self.income.remove(at: indexPath.item)
                 
             } else if indexPath.section == 1 {
+                self.dataContext.delete(self.expenses[indexPath.item]!)
+                
                 self.expenses.remove(at: indexPath.item)
                 
             }
             
             tableView.deleteRows(at: [indexPath], with: .automatic)
             
+            
         } else if editingStyle == .insert {
             if indexPath.section == 0 {
                 if self.income[indexPath.item] == nil {
-                    self.income.insert(
-                        [
-                            "text": "$0",
-                            "label": self.dataSource.label(for: indexPath)!
-                        ],
-                        at: indexPath.item
+                    let incomeTransaction = NSManagedObject.init(
+                        entity: NSEntityDescription.entity(forEntityName: "Transaction", in: self.dataContext)!,
+                        insertInto: self.dataContext
                     )
+                    
+                    incomeTransaction.setValuesForKeys(
+                        [
+                            "amount": "$0",
+                            "type": "income",
+                            "label": self.dataSource.label(for: indexPath)!
+                        ]
+                    )
+                    self.dataContext.insert(incomeTransaction)
+                    self.income.insert(incomeTransaction, at: indexPath.item)
                     
                 }
                 
             } else if indexPath.section == 1 {
                 if self.expenses[indexPath.item] == nil {
-                    self.expenses.insert(
-                        [
-                            "text": "$0",
-                            "label": self.dataSource.label(for: indexPath)!
-                        ],
-                        at: indexPath.item
+                    let expenseTransaction = NSManagedObject.init(
+                        entity: NSEntityDescription.entity(forEntityName: "Transaction", in: self.dataContext)!,
+                        insertInto: self.dataContext
                     )
+                    
+                    expenseTransaction.setValuesForKeys(
+                        [
+                            "amount": "$0",
+                            "type": "expense",
+                            "label": self.dataSource.label(for: indexPath)!
+                        ]
+                    )
+                    self.dataContext.insert(expenseTransaction)
+                    self.expenses.insert(expenseTransaction, at: indexPath.item)
                     
                 }
                 
@@ -245,15 +313,11 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
             
         }
         
-    }
-    
-    @IBAction func incomeTextFieldEditingDidEnd(_ sender: UITextField) {
-        let indexPath: IndexPath? = self.tableView.indexPathForRow(
-            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
-        )
-        
-        if indexPath != nil && self.income[indexPath!.item] != nil {
-            self.income[indexPath!.item]!["text"] = sender.text!
+        do {
+            try self.dataContext.save()
+            
+        } catch let error as NSError {
+            print("Could not save with error \(error)")
             
         }
         
@@ -274,10 +338,10 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     func setLabelForRowBeingEdited(_ label: String) {
         if let editedRow = self.rowBeingEdited as IndexPath! {
             if editedRow.section == 0 {
-                self.income[editedRow.item]!["label"] = label
+                self.income[editedRow.item]!.setValue(label, forKey: "label")
                 
             } else if editedRow.section == 1 {
-                self.expenses[editedRow.item]!["label"] = label
+                self.expenses[editedRow.item]!.setValue(label, forKey: "label")
                 
             } else {
                 return
@@ -285,6 +349,14 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
             }
             
             self.tableView.reloadRows(at: [editedRow], with: .automatic)
+            
+            do {
+                try self.dataContext.save()
+                
+            } catch let error as NSError {
+                print("Could not save with error \(error)")
+                
+            }
             
         }
         
@@ -305,5 +377,86 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         }
         
     }
+    
+    @IBAction func doneTapped(_ sender: UIBarButtonItem) {
+        
+        let budgetAmount = (self.sum(self.income) - self.sum(self.expenses)) / 30
+        
+        var budget: NSManagedObject? = nil
+        
+        do {
+            let fetchedBudget = try self.dataContext.fetch(NSFetchRequest.init(entityName: "Budget")) as [NSManagedObject]
+            if fetchedBudget.count > 0 {
+                budget = fetchedBudget[0]
+                
+            }
+            
+        } catch {
+            print("Failed catching budget")
+            
+        }
+        
+        if budget == nil {
+            budget = NSManagedObject.init(
+                entity: NSEntityDescription.entity(forEntityName: "Budget", in: self.dataContext)!,
+                insertInto: self.dataContext
+            )
+            
+            budget!.setValue(budgetAmount, forKey: "budget")
+            self.dataContext.insert(budget!)
+            
+        } else {
+            budget!.setValue(budgetAmount, forKey: "budget")
+            
+        }
 
+        do {
+            try self.dataContext.save()
+            
+        } catch let error as NSError {
+            print("Could not save with error \(error)")
+            
+        }
+
+    }
+    
+    func sum(_ transactions:[NSManagedObject?]) -> Int {
+        return transactions.map { (transaction) -> Int in
+            if transaction != nil {
+                return self.unformatCurrencyString(transaction!.value(forKey: "amount") as! String)
+                
+            }
+            
+            return 0
+        }.reduce(0, +)
+        
+    }
+    
+    func unformatCurrencyString(_ formattedString: String) -> Int {
+        return Int(formattedString.replacingOccurrences(of: "$", with: "").replacingOccurrences(of: ",", with: "").replacingOccurrences(of: ".", with: ""))!
+        
+    }
+
+    @IBAction func amountTextFieldEditingChanged(_ sender: UITextField) {
+        let indexPath: IndexPath? = self.tableView.indexPathForRow(
+            at: sender.superview!.convert(sender.frame.origin, to: self.tableView)
+        )
+        
+        if indexPath != nil && indexPath!.section == 0 && self.income[indexPath!.item] != nil {
+            self.income[indexPath!.item]!.setValue(sender.text!, forKey: "amount")
+            
+        } else if indexPath != nil && indexPath!.section == 1 && self.expenses[indexPath!.item] != nil {
+            self.expenses[indexPath!.item]!.setValue(sender.text!, forKey: "amount")
+            
+        }
+        
+        do {
+            try self.dataContext.save()
+            
+        } catch let error as NSError {
+            print("Could not save with error \(error)")
+            
+        }
+        
+    }
 }
