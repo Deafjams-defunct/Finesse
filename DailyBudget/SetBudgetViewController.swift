@@ -16,11 +16,15 @@ class SetBudgetViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.view.addGestureRecognizer(
+            UITapGestureRecognizer.init(target: self, action: #selector(self.dismissKeyboard) )
+        )
+        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func dismissKeyboard() {
+        self.view.endEditing(true)
+        
     }
     
     @IBAction func setBudgetPressed(_ sender: UIButton) {
@@ -50,14 +54,23 @@ class SetBudgetViewController: UIViewController {
         
     }
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if segue.identifier == "setBudget" {
+            print("set budget")
+            
+        } else if segue.identifier == "buildBudget" {
+            print ("build budget")
+            
+        }
+        
     }
-    */
-
+    
+    @IBAction func unwindToSetBudget(segue: UIStoryboardSegue) {}
+    
 }

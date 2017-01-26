@@ -23,6 +23,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         self.expenses = [nil]
         
         super.init(coder: aDecoder)
+
     }
     
     override func viewDidLoad() {
@@ -31,7 +32,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         // Uncomment the following line to preserve selection between presentations
         self.clearsSelectionOnViewWillAppear = false
 
-        self.setEditing(true, animated: true)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Edit", style: .plain, target: self, action: #selector(startEditing))
         
         do {
             let savedTransactions = try self.dataContext.fetch(NSFetchRequest.init(entityName: "Transaction")) as [NSManagedObject]
@@ -49,12 +50,6 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         self.expenses.append(nil)
         
         self.tableView.reloadData()
-        
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
         
     }
 
@@ -127,6 +122,17 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !self.isEditing {
+            self.startEditing()
+            self.tableView.deselectRow(
+                at: IndexPath.init(item: indexPath.item, section: indexPath.section),
+                animated: true
+            )
+
+            return
+            
+        }
+        
         let lastIncomeRow = indexPath.section == 0 && self.income[indexPath.item] == nil
         let lastExpensesRow = indexPath.section == 1 && self.expenses[indexPath.item] == nil
         
@@ -182,6 +188,9 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
                 
             }
             
+            transactionCell.transactionLabelButton.setTitleColor(UIColor.black, for: .disabled)
+            transactionCell.transactionLabelButton.setTitleColor(UIColor.blue, for: .normal)
+            
             return transactionCell
             
         }
@@ -215,6 +224,9 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
                 print("Could not save with error \(error)")
                 
             }
+            
+            transactionCell.transactionLabelButton.setTitleColor(UIColor.black, for: .disabled)
+            transactionCell.transactionLabelButton.setTitleColor(UIColor.blue, for: .normal)
             
             return transactionCell
             
@@ -376,8 +388,14 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
-    @IBAction func doneTapped(_ sender: UIBarButtonItem) {
+    func startEditing() {
+        self.setEditing(true, animated: true)
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Done", style: .done, target: self, action: #selector(doneEditing))
+        
+    }
+    
+    func doneEditing() {
         let budgetAmount = (self.sum(self.income) - self.sum(self.expenses)) / 30
         
         var budget: NSManagedObject? = nil
@@ -407,7 +425,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
             budget!.setValue(budgetAmount, forKey: "budget")
             
         }
-
+        
         do {
             try self.dataContext.save()
             
@@ -416,8 +434,13 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
             
         }
         
-        self.performSegue(withIdentifier: "unwindToMain", sender: self)
-
+        self.setEditing(false, animated: true)
+        self.view.endEditing(true)
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Edit", style: .plain, target: self, action: #selector(startEditing))
+        
+        // self.performSegue(withIdentifier: "unwindToMain", sender: self)
+        
     }
     
     func sum(_ transactions:[NSManagedObject?]) -> Int {

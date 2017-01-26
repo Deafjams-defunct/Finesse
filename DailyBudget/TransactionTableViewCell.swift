@@ -13,10 +13,19 @@ class TransactionTableViewCell: UITableViewCell {
     @IBOutlet weak var transactionLabelButton: UIButton!
     @IBOutlet weak var currencyTextField: UITextField!
     
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
         currencyTextField.becomeFirstResponder()
+        
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        transactionLabelButton.isEnabled = editing
+        currencyTextField.isEnabled = editing
         
     }
     
