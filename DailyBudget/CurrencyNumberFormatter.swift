@@ -40,9 +40,16 @@ class CurrencyNumberFormatter: NumberFormatter {
         
     }
     
+    func format(with text:Int) -> String? {
+        return self.string(for: text)
+        
+    }
+    
     func unformat(_ text: String) -> Int? {
-        if let number = self.number(from: text) as NSNumber! {
-            return Int(number)
+        let normalizedText = text.replacingOccurrences(of: "$", with: "").replacingOccurrences(of: ",", with: "")
+        
+        if let number = Int(normalizedText) as Int! {
+            return number
             
         }
         

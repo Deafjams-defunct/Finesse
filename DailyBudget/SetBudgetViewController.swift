@@ -7,15 +7,46 @@
 //
 
 import UIKit
+import CoreData
 
 class SetBudgetViewController: UIViewController {
 
     @IBOutlet weak var budgetTextField: UITextField!
     
+    let dataContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    var user: User!
+    
+    required init?(coder aDecoder: NSCoder) {
+        do {
+            let fetchedUsers = try self.dataContext.fetch(NSFetchRequest.init(entityName: "User")) as [User]
+            if fetchedUsers.count == 1 {
+                self.user = fetchedUsers.first
+                
+            }
+            
+        } catch {
+            print("Failed fetching user object")
+            
+        }
+        
+        if self.user == nil {
+            self.user = NSEntityDescription.insertNewObject(forEntityName: "User", into: self.dataContext) as! User
+            
+        }
+        
+        super.init(coder: aDecoder)
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        if self.user.budget > 0 {
+            self.budgetTextField.text = CurrencyNumberFormatter.currencyFormatter.format(with: Int(self.user.budget))
+            
+        }
+        
         self.view.addGestureRecognizer(
             UITapGestureRecognizer.init(target: self, action: #selector(self.dismissKeyboard) )
         )
@@ -28,7 +59,35 @@ class SetBudgetViewController: UIViewController {
     }
     
     @IBAction func setBudgetPressed(_ sender: UIButton) {
-        self.performSegue(withIdentifier: "setBudget", sender: self)
+        if self.budgetTextField.text != nil && ["$0", ""].contains(self.budgetTextField.text!) {
+            let alert = UIAlertController(
+                title: "Set your budget",
+                message: "I can also build your budget for you below.",
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(
+                .init(
+                    title: "Set Budget",
+                    style: .default,
+                    handler: { (_) in
+                        self.budgetTextField.becomeFirstResponder()
+                    }
+                )
+            )
+            
+            self.present(alert, animated: true, completion: nil)
+            
+        } else {
+            self.user.funds -= self.user.budget
+            self.user.budget = Int32(CurrencyNumberFormatter.currencyFormatter.unformat(self.budgetTextField.text!)!)
+            self.user.funds += self.user.budget
+            
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            
+            self.performSegue(withIdentifier: "setBudget", sender: self)
+
+        }
         
     }
     
@@ -54,21 +113,17 @@ class SetBudgetViewController: UIViewController {
         
     }
 
-    
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == "setBudget" {
-            print("set budget")
+        if segue.identifier == "buildBudget" {
+            let tabBarController = segue.destination as! UITabBarController
+            tabBarController.selectedIndex = 1
             
-        } else if segue.identifier == "buildBudget" {
-            print ("build budget")
+            let navController = tabBarController.selectedViewController as! UINavigationController
+            (navController.visibleViewController as! FundsTableViewController).startEditing()
             
         }
-        
     }
     
     @IBAction func unwindToSetBudget(segue: UIStoryboardSegue) {}

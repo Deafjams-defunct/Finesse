@@ -10,11 +10,6 @@ import UIKit
 
 class TransactionsDataSource: NSObject {
     
-    var transactions: [Dictionary<String, Any?>]
-    
-    override init() {
-        transactions = []
-        
-    }
+    var transactions: [Dictionary<String, Any?>] = []
 
 }

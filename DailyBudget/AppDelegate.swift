@@ -17,8 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        if UserDefaults.standard.object(forKey: "budget") == nil {
-            self.window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "budgetViewController")
+        do {
+            let fetchedUsers = try self.persistentContainer.viewContext.fetch(NSFetchRequest.init(entityName: "User")) as [User]
+            if fetchedUsers.count == 1 && fetchedUsers[0].last_used != nil {
+                self.window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
+                
+            }
+            
+        } catch {
+            print("Failed fetching user object")
             
         }
         
