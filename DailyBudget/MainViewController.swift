@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import CoreData
 
 class MainViewController: UIViewController, UITextFieldDelegate {
@@ -18,9 +19,30 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     let dataContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     var user: User!
+    
+    func notifications() {
+        let center = UNUserNotificationCenter.current()
+        
+        let notification = UNMutableNotificationContent()
+        notification.title = "Hello"
+        notification.body = "World"
+        notification.sound = UNNotificationSound.default()
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "helloworld", content: notification, trigger: trigger)
+        
+        center.add(request) { (error) in
+            if let error = error {
+                print(error)
+            }
+        }
+        
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.notifications()
         
         do {
             let fetchedUsers = try self.dataContext.fetch(NSFetchRequest.init(entityName: "User")) as [User]

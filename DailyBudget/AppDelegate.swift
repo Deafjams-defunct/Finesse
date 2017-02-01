@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import CoreData
 
 @UIApplicationMain
@@ -27,6 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             print("Failed fetching user object")
             
+        }
+        
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            if let anError = error {
+                print(anError)
+                
+            }
         }
         
         return true
