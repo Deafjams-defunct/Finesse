@@ -109,6 +109,8 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             
         }
         
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+        
     }
     
     @IBAction func unwindToMain(segue: UIStoryboardSegue) {}
