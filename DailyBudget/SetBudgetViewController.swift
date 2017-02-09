@@ -113,7 +113,7 @@ class SetBudgetViewController: UIViewController {
             
             (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
             
-            self.performSegue(withIdentifier: "setBudget", sender: self)
+            // self.performSegue(withIdentifier: "setBudget", sender: self)
 
         }
         
@@ -123,6 +123,7 @@ class SetBudgetViewController: UIViewController {
         self.notificationsAlert()
         
         (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
+        ((UIApplication.shared.delegate as! AppDelegate).window?.rootViewController as! UITabBarController).selectedIndex = 1
         
         self.performSegue(withIdentifier: "buildBudget", sender: self)
         

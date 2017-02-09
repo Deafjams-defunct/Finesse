@@ -129,7 +129,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             
             
         } else {
-
             self.user.funds -= self.user.budget
             self.user.budget = Int32(CurrencyNumberFormatter.currencyFormatter.unformat(sender.text!)!)
             self.user.funds += self.user.budget
@@ -150,7 +149,15 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     @IBAction func spendButtonTapped(_ sender: Any) {
         if let spendingText = self.spendingTextField.text as String! {
             if !["$0", ""].contains(spendingText) {
-                self.user.funds -= CurrencyNumberFormatter.currencyFormatter.unformat(spendingText)!
+                let amount = CurrencyNumberFormatter.currencyFormatter.unformat(spendingText)!
+                
+                let transaction = NSEntityDescription.insertNewObject(forEntityName: "Transaction", into: self.dataContext) as! Transaction
+                transaction.type = "Spending"
+                transaction.label = "Transaction"
+                transaction.amount = Int32(amount)
+                transaction.time = Date() as NSDate
+                
+                self.user.funds -= amount
                 
                 self.updateDataLabels()
                 
