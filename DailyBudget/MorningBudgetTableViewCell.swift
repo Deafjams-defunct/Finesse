@@ -20,9 +20,4 @@ class MorningBudgetTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
-    @IBAction func timeButtonPressed(_ sender: UIButton) {
-        
-        
-    }
 }

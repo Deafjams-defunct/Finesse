@@ -1,16 +1,16 @@
 //
-//  EveningSpendingTableViewCell.swift
+//  DatePickerTableViewCell.swift
 //  Finesse
 //
-//  Created by Emma Foster on 1/31/17.
+//  Created by Emma Foster on 2/9/17.
 //  Copyright © 2017 Emma Foster. All rights reserved.
 //
 
 import UIKit
 
-class EveningSpendingTableViewCell: UITableViewCell {
-    @IBOutlet weak var timeLabel: UILabel!
-    @IBOutlet weak var toggle: UISwitch!
+class DatePickerTableViewCell: UITableViewCell {
+
+    @IBOutlet weak var datePicker: UIDatePicker!
     
     override func awakeFromNib() {
         super.awakeFromNib()

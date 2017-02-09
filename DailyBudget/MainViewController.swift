@@ -7,42 +7,22 @@
 //
 
 import UIKit
-import UserNotifications
 import CoreData
 
 class MainViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var fundsLabel: UILabel!
     @IBOutlet weak var spendingTextField: UITextField!
-    @IBOutlet weak var budgetButton: UIButton!
+    @IBOutlet weak var budgetText: UITextField!
     
     let dataContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     var user: User!
     
-    func notifications() {
-        let center = UNUserNotificationCenter.current()
-        
-        let notification = UNMutableNotificationContent()
-        notification.title = "Hello"
-        notification.body = "World"
-        notification.sound = UNNotificationSound.default()
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "helloworld", content: notification, trigger: trigger)
-        
-        center.add(request) { (error) in
-            if let error = error {
-                print(error)
-            }
-        }
-        
-    }
+    var previousBudget:Int! = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.notifications()
         
         do {
             let fetchedUsers = try self.dataContext.fetch(NSFetchRequest.init(entityName: "User")) as [User]
@@ -52,7 +32,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             }
             
         } catch {
-            print("Failed catching budget")
+            print("Failed fetching user")
             
         }
         
@@ -82,7 +62,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         self.user.last_used = NSDate()
         
         self.view.addGestureRecognizer(
-            UITapGestureRecognizer.init(target: self, action: #selector(self.dismissKeyboard) )
+            UITapGestureRecognizer.init(target: self, action: #selector(self.dismissKeyboard))
         )
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
@@ -90,7 +70,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     func updateDataLabels() {
-        self.budgetButton.setTitle(CurrencyNumberFormatter.currencyFormatter.format(with: Int(self.user.budget)), for: .normal)
+        self.budgetText.text = CurrencyNumberFormatter.currencyFormatter.string(for: self.user.budget)
         self.fundsLabel.text = CurrencyNumberFormatter.currencyFormatter.string(for: self.user.funds)
         
     }
@@ -119,6 +99,52 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             sender.text = "$0"
             
         }
+        
+    }
+    
+    func unsetBudgetAlert() {
+        let alert = UIAlertController(
+            title: "Set your budget",
+            message: "I can also build your budget for you below.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            .init(
+                title: "Set Budget",
+                style: .default,
+                handler: { (_) in self.budgetText.becomeFirstResponder() }
+            )
+        )
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        self.budgetText.text = CurrencyNumberFormatter.currencyFormatter.format(with: self.previousBudget)
+        
+    }
+    
+    @IBAction func budgetTextEditingDidEnd(_ sender: UITextField) {
+        if sender.text != nil && ["$0", ""].contains(sender.text!) {
+            self.unsetBudgetAlert()
+            
+            
+        } else {
+
+            self.user.funds -= self.user.budget
+            self.user.budget = Int32(CurrencyNumberFormatter.currencyFormatter.unformat(sender.text!)!)
+            self.user.funds += self.user.budget
+            
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            
+            self.updateDataLabels()
+            
+        }
+
+        
+    }
+    @IBAction func budgetTextEditingDidBegin(_ sender: UITextField) {
+        self.previousBudget = CurrencyNumberFormatter.currencyFormatter.unformat(sender.text!)
+        
     }
     
     @IBAction func spendButtonTapped(_ sender: Any) {
@@ -127,11 +153,14 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                 self.user.funds -= CurrencyNumberFormatter.currencyFormatter.unformat(spendingText)!
                 
                 self.updateDataLabels()
+                
             }
             
         }
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
+        
+        self.spendingTextField.text = ""
         
     }
     
