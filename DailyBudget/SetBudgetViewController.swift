@@ -13,6 +13,7 @@ class SetBudgetViewController: UIViewController {
 
     @IBOutlet weak var budgetTextField: UITextField!
     
+    let notifications = FinesseNotifications.shared
     let dataContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     var user: User!
@@ -58,25 +59,48 @@ class SetBudgetViewController: UIViewController {
         
     }
     
+    func unsetBudgetAlert() {
+        let alert = UIAlertController(
+            title: "Set your budget",
+            message: "I can also build your budget for you below.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            .init(
+                title: "Set Budget",
+                style: .default,
+                handler: { (_) in self.budgetTextField.becomeFirstResponder() }
+            )
+        )
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
+    func notificationsAlert() {
+        let alert = UIAlertController(
+            title: "Finesse notifies you of your budget",
+            message: "The app will notify you of your daily budget every morning, and asks your daily spending every night",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            .init(
+                title: "Ok",
+                style: .default,
+                handler: { (_) in self.notifications.authorizeNotifications()}
+            )
+        )
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
     @IBAction func setBudgetPressed(_ sender: UIButton) {
         if self.budgetTextField.text != nil && ["$0", ""].contains(self.budgetTextField.text!) {
-            let alert = UIAlertController(
-                title: "Set your budget",
-                message: "I can also build your budget for you below.",
-                preferredStyle: .alert
-            )
+            self.unsetBudgetAlert()
             
-            alert.addAction(
-                .init(
-                    title: "Set Budget",
-                    style: .default,
-                    handler: { (_) in
-                        self.budgetTextField.becomeFirstResponder()
-                    }
-                )
-            )
-            
-            self.present(alert, animated: true, completion: nil)
             
         } else {
             self.user.funds -= self.user.budget
@@ -85,13 +109,20 @@ class SetBudgetViewController: UIViewController {
             
             (UIApplication.shared.delegate as! AppDelegate).saveContext()
             
-            self.performSegue(withIdentifier: "setBudget", sender: self)
+            self.notificationsAlert()
+            
+            (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
 
         }
         
     }
     
     @IBAction func buildBudgetPressed(_ sender: UIButton) {
+        self.notificationsAlert()
+        
+        (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
+        ((UIApplication.shared.delegate as! AppDelegate).window?.rootViewController as! UITabBarController).selectedIndex = 1
+        
         self.performSegue(withIdentifier: "buildBudget", sender: self)
         
     }
@@ -125,7 +156,5 @@ class SetBudgetViewController: UIViewController {
             
         }
     }
-    
-    @IBAction func unwindToSetBudget(segue: UIStoryboardSegue) {}
     
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import CoreData
 
 @UIApplicationMain
@@ -19,8 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         do {
             let fetchedUsers = try self.persistentContainer.viewContext.fetch(NSFetchRequest.init(entityName: "User")) as [User]
-            if fetchedUsers.count == 1 && fetchedUsers[0].last_used != nil {
+            if fetchedUsers.first?.last_used != nil {
                 self.window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainTabBarController")
+                
+            } else {
+                self.window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "setBudgetViewController")
                 
             }
             

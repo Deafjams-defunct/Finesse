@@ -12,8 +12,13 @@
 		C32A5CD21E2D776A00F436C5 /* TransactionLabelDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32A5CD11E2D776A00F436C5 /* TransactionLabelDataSource.swift */; };
 		C32A5CD91E2DED7E00F436C5 /* TransactionsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32A5CD81E2DED7E00F436C5 /* TransactionsDataSource.swift */; };
 		C32A5CE11E33B1FE00F436C5 /* LabelsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32A5CE01E33B1FE00F436C5 /* LabelsTableViewController.swift */; };
+		C344F9751E48A79200246323 /* FinesseNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C344F9741E48A79200246323 /* FinesseNotifications.swift */; };
+		C344F97E1E4CB09900246323 /* DatePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C344F97D1E4CB09900246323 /* DatePickerTableViewCell.swift */; };
 		C3907A841E390B01002BDDD5 /* SetBudgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3907A831E390B01002BDDD5 /* SetBudgetViewController.swift */; };
 		C3907A861E392032002BDDD5 /* CurrencyNumberFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3907A851E392032002BDDD5 /* CurrencyNumberFormatter.swift */; };
+		C3E8272C1E404B5500BB1786 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E8272B1E404B5500BB1786 /* SettingsTableViewController.swift */; };
+		C3E8272E1E41667100BB1786 /* MorningBudgetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E8272D1E41667100BB1786 /* MorningBudgetTableViewCell.swift */; };
+		C3E827301E41669C00BB1786 /* EveningSpendingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E8272F1E41669C00BB1786 /* EveningSpendingTableViewCell.swift */; };
 		C3F9DE691E230E10006E78CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F9DE681E230E10006E78CA /* AppDelegate.swift */; };
 		C3F9DE6E1E230E10006E78CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C3F9DE6C1E230E10006E78CA /* Main.storyboard */; };
 		C3F9DE711E230E10006E78CA /* DailyBudget.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C3F9DE6F1E230E10006E78CA /* DailyBudget.xcdatamodeld */; };
@@ -41,8 +46,13 @@
 		C32A5CD11E2D776A00F436C5 /* TransactionLabelDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionLabelDataSource.swift; sourceTree = "<group>"; };
 		C32A5CD81E2DED7E00F436C5 /* TransactionsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionsDataSource.swift; sourceTree = "<group>"; };
 		C32A5CE01E33B1FE00F436C5 /* LabelsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelsTableViewController.swift; sourceTree = "<group>"; };
+		C344F9741E48A79200246323 /* FinesseNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FinesseNotifications.swift; path = DailyBudget/FinesseNotifications.swift; sourceTree = "<group>"; };
+		C344F97D1E4CB09900246323 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
 		C3907A831E390B01002BDDD5 /* SetBudgetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetBudgetViewController.swift; sourceTree = "<group>"; };
 		C3907A851E392032002BDDD5 /* CurrencyNumberFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyNumberFormatter.swift; sourceTree = "<group>"; };
+		C3E8272B1E404B5500BB1786 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		C3E8272D1E41667100BB1786 /* MorningBudgetTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MorningBudgetTableViewCell.swift; sourceTree = "<group>"; };
+		C3E8272F1E41669C00BB1786 /* EveningSpendingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EveningSpendingTableViewCell.swift; sourceTree = "<group>"; };
 		C3F9DE651E230E10006E78CA /* Finesse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finesse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3F9DE681E230E10006E78CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C3F9DE6D1E230E10006E78CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -67,6 +77,9 @@
 		C32A5CC21E2BC77700F436C5 /* UI Elements */ = {
 			isa = PBXGroup;
 			children = (
+				C344F97D1E4CB09900246323 /* DatePickerTableViewCell.swift */,
+				C3E8272D1E41667100BB1786 /* MorningBudgetTableViewCell.swift */,
+				C3E8272F1E41669C00BB1786 /* EveningSpendingTableViewCell.swift */,
 				C32A5CCB1E2D68DD00F436C5 /* TransactionTableViewCell.swift */,
 			);
 			name = "UI Elements";
@@ -75,8 +88,9 @@
 		C32A5CC31E2BC78200F436C5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				C3907A831E390B01002BDDD5 /* SetBudgetViewController.swift */,
+				C3E8272B1E404B5500BB1786 /* SettingsTableViewController.swift */,
 				C3F9DE7F1E232D12006E78CA /* MainViewController.swift */,
+				C3907A831E390B01002BDDD5 /* SetBudgetViewController.swift */,
 				C32A5CE01E33B1FE00F436C5 /* LabelsTableViewController.swift */,
 				C32A5CBC1E28249000F436C5 /* FundsTableViewController.swift */,
 			);
@@ -90,6 +104,15 @@
 				C32A5CD11E2D776A00F436C5 /* TransactionLabelDataSource.swift */,
 			);
 			name = "Data Sources";
+			sourceTree = "<group>";
+		};
+		C344F9761E48A79900246323 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				C344F9741E48A79200246323 /* FinesseNotifications.swift */,
+			);
+			name = Objects;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		C3907A871E392393002BDDD5 /* Formatters */ = {
@@ -120,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				C3F9DE681E230E10006E78CA /* AppDelegate.swift */,
+				C344F9761E48A79900246323 /* Objects */,
 				C32A5CC31E2BC78200F436C5 /* Controllers */,
 				C32A5CC21E2BC77700F436C5 /* UI Elements */,
 				C3907A871E392393002BDDD5 /* Formatters */,
@@ -210,7 +234,11 @@
 			files = (
 				C3907A841E390B01002BDDD5 /* SetBudgetViewController.swift in Sources */,
 				C32A5CD21E2D776A00F436C5 /* TransactionLabelDataSource.swift in Sources */,
+				C3E8272E1E41667100BB1786 /* MorningBudgetTableViewCell.swift in Sources */,
 				C3907A861E392032002BDDD5 /* CurrencyNumberFormatter.swift in Sources */,
+				C344F9751E48A79200246323 /* FinesseNotifications.swift in Sources */,
+				C3E8272C1E404B5500BB1786 /* SettingsTableViewController.swift in Sources */,
+				C3E827301E41669C00BB1786 /* EveningSpendingTableViewCell.swift in Sources */,
 				C32A5CBD1E28249000F436C5 /* FundsTableViewController.swift in Sources */,
 				C32A5CCC1E2D68DD00F436C5 /* TransactionTableViewCell.swift in Sources */,
 				C32A5CD91E2DED7E00F436C5 /* TransactionsDataSource.swift in Sources */,
@@ -218,6 +246,7 @@
 				C32A5CE11E33B1FE00F436C5 /* LabelsTableViewController.swift in Sources */,
 				C3F9DE711E230E10006E78CA /* DailyBudget.xcdatamodeld in Sources */,
 				C3F9DE801E232D12006E78CA /* MainViewController.swift in Sources */,
+				C344F97E1E4CB09900246323 /* DatePickerTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
