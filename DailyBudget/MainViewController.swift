@@ -53,13 +53,14 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             
             let components = calendar.dateComponents([.day], from: startOfPreviousRunDate, to: startOfCurrentDate)
             
-            self.user.funds = self.user.funds + components.day! * Int(self.user.budget)
+            self.user.funds += Int32(components.day!) * Int32(self.user.budget)
             
         }
 
         self.updateDataLabels()
         
-        self.user.last_used = NSDate()
+        self.user.last_used = Date()
+        
         
         self.view.addGestureRecognizer(
             UITapGestureRecognizer.init(target: self, action: #selector(self.dismissKeyboard))
@@ -80,10 +81,12 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         self.view.endEditing(true)
         
     }
+    
+    
     
     @IBAction func spendingTextEditingChanged(_ sender: UITextField) {
         if let originalText = sender.text as String! {
@@ -155,9 +158,9 @@ class MainViewController: UIViewController, UITextFieldDelegate {
                 transaction.type = "Spending"
                 transaction.label = "Transaction"
                 transaction.amount = Int32(amount)
-                transaction.time = Date() as NSDate
+                transaction.time = Date()
                 
-                self.user.funds -= amount
+                self.user.funds -= Int32(amount)
                 
                 self.updateDataLabels()
                 

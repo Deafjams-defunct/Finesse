@@ -37,7 +37,7 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Edit", style: .plain, target: self, action: #selector(startEditing))
         
         do {
-            let savedTransactions = try self.dataContext.fetch(NSFetchRequest.init(entityName: "Transaction")) as! [Transaction?]
+            let savedTransactions = try self.dataContext.fetch(NSFetchRequest.init(entityName: "Transaction")) as [Transaction?]
             self.income = savedTransactions.filter({$0?.type as String! == "income"})
             self.expenses = savedTransactions.filter({$0?.type as String! == "expense"})
             
@@ -352,14 +352,14 @@ class FundsTableViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
-    func startEditing() {
+    @objc func startEditing() {
         self.setEditing(true, animated: true)
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Done", style: .done, target: self, action: #selector(doneEditing))
         
     }
     
-    func doneEditing() {
+    @objc func doneEditing() {
         let budgetAmount = (self.sum(self.income) - self.sum(self.expenses)) / 30
         
         self.user.funds -= self.user.budget

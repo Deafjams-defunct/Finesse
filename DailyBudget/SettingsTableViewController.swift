@@ -162,7 +162,7 @@ class SettingsTableViewController: UITableViewController {
     }
 
     @IBAction func eveningSpendingDatePickerValueChanged(_ sender: UIDatePicker) {
-        self.notifications.eveningSpendingNotification.time = sender.date as NSDate
+        self.notifications.eveningSpendingNotification.time = sender.date
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         

@@ -33,7 +33,7 @@ class FinesseNotifications: NSObject {
                 var notificationTime = DateComponents()
                 notificationTime.hour = 20
                 notificationTime.minute = 0
-                self.eveningSpendingNotification!.time = Calendar.current.date(from: notificationTime)! as NSDate
+                self.eveningSpendingNotification!.time = Calendar.current.date(from: notificationTime)
                 
                 (UIApplication.shared.delegate as! AppDelegate).saveContext()
                 
